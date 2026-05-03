@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brief-gray-bg text-brief-gray-text font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-brief-gray-heading font-semibold;
+  }
+}
+
+@layer utilities {
+  .skeleton {
+    @apply bg-brief-gray-border animate-pulse rounded;
+  }
+}
