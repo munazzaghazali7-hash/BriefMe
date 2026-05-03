@@ -48,10 +48,11 @@ app.get('/health', (req, res) => {
 
 // Serve React static files in production
 if (isProd) {
-  const clientDist = path.join(__dirname, '../../client/dist');
+  // Works for both: ts-node (server/index.ts) and compiled (server/dist/index.js)
+  const clientDist = path.join(__dirname, '..', 'client', 'dist');
   app.use(express.static(clientDist));
   // SPA fallback — all non-API routes serve index.html
-  app.get('*', (req, res) => {
+  app.get('*', (_req, res) => {
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 }

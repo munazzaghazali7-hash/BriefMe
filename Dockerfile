@@ -8,27 +8,19 @@ RUN npm install
 COPY client/ ./client/
 RUN npm run build -w client
 
-# ---- Build server ----
-FROM node:20-alpine AS server-builder
-WORKDIR /app
-COPY package*.json ./
-COPY server/package*.json ./server/
-RUN npm install --workspace=server
-COPY server/ ./server/
-RUN cd server && npx tsc
-
 # ---- Production image ----
 FROM node:20-alpine
 WORKDIR /app
 
-# Copy server deps
+# Install all server deps (including ts-node/typescript for runtime)
+COPY package*.json ./
 COPY server/package*.json ./server/
-RUN cd server && npm install --omit=dev
+RUN npm install --workspace=server
 
-# Copy compiled server
-COPY --from=server-builder /app/server/dist ./server/dist
+# Copy server source
+COPY server/ ./server/
 
-# Copy built client
+# Copy built client from previous stage
 COPY --from=client-builder /app/client/dist ./client/dist
 
 ENV NODE_ENV=production
@@ -36,4 +28,4 @@ ENV PORT=8080
 
 EXPOSE 8080
 
-CMD ["node", "server/dist/index.js"]
+CMD ["node", "--require", "ts-node/register", "server/index.ts"]
