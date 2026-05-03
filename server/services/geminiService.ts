@@ -1,7 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import dotenv from 'dotenv';
 
-dotenv.config({ path: '../.env' });
 
 export const generateBriefingSummary = async (emailData: any, calendarData: any, driveData: any) => {
   if (!process.env.GEMINI_API_KEY) {

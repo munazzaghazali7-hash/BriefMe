@@ -9,7 +9,11 @@ import gmailRoutes from './routes/gmail';
 import calendarRoutes from './routes/calendar';
 import driveRoutes from './routes/drive';
 
-dotenv.config({ path: '../.env' });
+// In dev: loads from ../.env relative to /server
+// In production (Cloud Run): env vars are injected, dotenv is a no-op
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: path.join(__dirname, '..', '.env') });
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -48,8 +52,10 @@ app.get('/health', (req, res) => {
 
 // Serve React static files in production
 if (isProd) {
-  // Works for both: ts-node (server/index.ts) and compiled (server/dist/index.js)
-  const clientDist = path.join(__dirname, '..', 'client', 'dist');
+  // When compiled: __dirname = /app/server/dist, so go up 2 levels to /app
+  // When ts-node:  __dirname = /app/server, so go up 1 level to /app
+  const appRoot = path.join(__dirname, '..', '..');
+  const clientDist = path.join(appRoot, 'client', 'dist');
   app.use(express.static(clientDist));
   // SPA fallback — all non-API routes serve index.html
   app.get('*', (_req, res) => {

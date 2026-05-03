@@ -1,7 +1,5 @@
 import { google } from 'googleapis';
-import dotenv from 'dotenv';
 
-dotenv.config({ path: '../.env' });
 
 export const getOAuth2Client = () => {
   return new google.auth.OAuth2(
