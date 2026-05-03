@@ -5,7 +5,7 @@ import { Mail, Calendar, FileText, Loader2 } from 'lucide-react';
 import { useBriefingStore } from '../store/useBriefingStore';
 
 export default function Dashboard() {
-  const { user, isLoading, setIsLoading } = useBriefingStore();
+  const { user } = useBriefingStore();
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
 

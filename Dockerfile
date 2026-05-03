@@ -1,27 +1,22 @@
-# ---- Build client ----
-FROM node:20-alpine AS client-builder
+# Single-stage build for simplicity and reliability
+FROM node:20-alpine
+
 WORKDIR /app
+
+# Copy workspace config
 COPY package*.json ./
 COPY client/package*.json ./client/
 COPY server/package*.json ./server/
+
+# Install all dependencies
 RUN npm install
+
+# Copy all source code
 COPY client/ ./client/
-RUN npm run build -w client
-
-# ---- Production image ----
-FROM node:20-alpine
-WORKDIR /app
-
-# Install all server deps (including ts-node/typescript for runtime)
-COPY package*.json ./
-COPY server/package*.json ./server/
-RUN npm install --workspace=server
-
-# Copy server source
 COPY server/ ./server/
 
-# Copy built client from previous stage
-COPY --from=client-builder /app/client/dist ./client/dist
+# Build the React client
+RUN npm run build -w client
 
 ENV NODE_ENV=production
 ENV PORT=8080
